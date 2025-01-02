@@ -3,6 +3,7 @@ import Image from "./Image"
 import PostInfo from "./PostInfo"
 import PostInteractions from "./PostInteractions"
 import Video from "./Video";
+import Link from "next/link";
 
 interface FileDetailsResponse {
   width: number;
@@ -14,7 +15,7 @@ interface FileDetailsResponse {
 }
 
 
-const Post = async () => {
+const Post = async ({ type }: { type?: "status" | "comment" })=> {
 
   const getFileDetails = async (
     fileId: string
@@ -47,26 +48,61 @@ const Post = async () => {
         <span>Mael Dev reposted</span>
         </div>
         {/* POST CONTENT */}
-        <div className="flex gap-4">
+        {/* <div className="flex gap-4"> */}
+        <div className={`flex gap-4 ${type === "status" && "flex-col"}`}>
         {/* AVATAR */}
-        <div className="relative w-10 h-10 rounded-full overflow-hidden">
+        <div className={`${
+            type === "status" && "hidden"
+          } relative w-10 h-10 rounded-full overflow-hidden`}>
          <Image path="general/avatar.png" alt="" w={100} h={100} tr={true}/>
         </div>
         {/* CONTENT */}
         <div className="flex-1 flex flex-col gap-2">
           {/* TOP */}
+          <div className="w-full flex justify-between">          
           <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center gap-2 flex-wrap">
-               <h1 className="text-md font-bold">Mael Dev</h1>
-                <span className="text-textGray">@maeldev</span>
-                <span className="text-textGray">1 day ago</span> 
+          <Link href={`/maelWebDev`} className="flex gap-4">
+              <div
+                className={`${
+                  type !== "status" && "hidden"
+                } relative w-10 h-10 rounded-full overflow-hidden`}
+              >
+                <Image
+                  path="general/avatar.png"
+                  alt=""
+                  w={100}
+                  h={100}
+                  tr={true}
+                />
+              </div>
+              <div
+                className={`flex items-center gap-2 flex-wrap ${
+                  type === "status" && "flex-col gap-0 !items-start"
+                }`}
+              >
+                <h1 className="text-md font-bold">Mael Dev</h1>
+                <span
+                  className={`text-textGray ${type === "status" && "text-sm"}`}
+                >
+                  @MaelWebDev
+                </span>
+                {type !== "status" && (
+                  <span className="text-textGray">1 day ago</span>
+                )}
+              </div>
+            </Link>
             </div>
             <PostInfo/>
           </div>
           {/* TEXT & MEDIA */}
-          <p>
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Reprehenderit natus odio obcaecati quae iste amet aliquam tenetur voluptatum perferendis, totam in quidem aperiam eos quis placeat! Recusandae ut provident fugiat.
-          </p>
+          <Link href={`/maelWebDev/status/123`}>
+            <p className={`${type === "status" && "text-lg"}`}>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum,
+              animi. Laborum commodi aliquam alias molestias odio, ab in,
+              reprehenderit excepturi temporibus, ducimus necessitatibus fugiat
+              iure nam voluptas soluta pariatur inventore.
+            </p>
+          </Link>
           {fileDetails && fileDetails.fileType === "image" ? (
             <Image
               path={fileDetails.filePath}
@@ -80,6 +116,9 @@ const Post = async () => {
               path={fileDetails.filePath}
               className={fileDetails.customMetadata?.sensitive ? "blur-lg" : ""}
             />
+          )}
+          {type === "status" && (
+            <span className="text-textGray">8:41 PM · Dec 5, 2024</span>
           )}
           <PostInteractions/>
         </div>
